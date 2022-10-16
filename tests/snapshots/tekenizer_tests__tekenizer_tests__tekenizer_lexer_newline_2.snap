@@ -1,5 +1,5 @@
 ---
-source: tests/tekenizer.rs
+source: tests/tekenizer_tests.rs
 expression: tokens
 ---
 Ok(
@@ -14,18 +14,18 @@ Ok(
         },
         Token {
             kind: "newline",
-            raw: "\n",
+            raw: "\r\n",
             span: Span {
                 start: 3,
-                end: 4,
+                end: 5,
             },
         },
         Token {
             kind: "keyword",
             raw: "def",
             span: Span {
-                start: 4,
-                end: 7,
+                start: 5,
+                end: 8,
             },
         },
     ],

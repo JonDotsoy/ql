@@ -1,0 +1,48 @@
+---
+source: tests/tekenizer_tests.rs
+expression: tokens
+---
+Ok(
+    [
+        Token {
+            kind: "keyword",
+            raw: "ctx",
+            span: Span {
+                start: 0,
+                end: 3,
+            },
+        },
+        Token {
+            kind: "dot",
+            raw: ".",
+            span: Span {
+                start: 3,
+                end: 4,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "var_name",
+            span: Span {
+                start: 4,
+                end: 12,
+            },
+        },
+        Token {
+            kind: "colon",
+            raw: ":",
+            span: Span {
+                start: 12,
+                end: 13,
+            },
+        },
+        Token {
+            kind: "numeric",
+            raw: "123",
+            span: Span {
+                start: 13,
+                end: 16,
+            },
+        },
+    ],
+)

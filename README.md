@@ -12,7 +12,7 @@ An language to make a search instruction. This language provides a set of defini
 ![](./docs/assets/search%20box%20-%20demo-1.png)
 
 ```
-"search value"
+search value
 ```
 
 **JSON:**
@@ -43,7 +43,7 @@ function filter(item: Item) {
 ![](./docs/assets/search%20box%20-%20demo-2.png)
 
 ```
-"search value condition:"
+search value condition:
 ```
 
 **JSON:***
@@ -75,7 +75,7 @@ function filter(item: Item) {
 ![](./docs/assets/search%20box%20-%20demo-3.png)
 
 ```
-"search value" condition: "value"
+search value condition: "value"
 ```
 
 **JSON:**

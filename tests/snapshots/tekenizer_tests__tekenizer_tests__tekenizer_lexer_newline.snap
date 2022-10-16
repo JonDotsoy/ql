@@ -1,31 +1,31 @@
 ---
-source: tests/tekenizer.rs
+source: tests/tekenizer_tests.rs
 expression: tokens
 ---
 Ok(
     [
         Token {
-            kind: "regex",
-            raw: "/",
-            span: Span {
-                start: 0,
-                end: 1,
-            },
-        },
-        Token {
             kind: "keyword",
             raw: "abc",
             span: Span {
-                start: 1,
+                start: 0,
+                end: 3,
+            },
+        },
+        Token {
+            kind: "newline",
+            raw: "\n",
+            span: Span {
+                start: 3,
                 end: 4,
             },
         },
         Token {
-            kind: "regex",
-            raw: "/",
+            kind: "keyword",
+            raw: "def",
             span: Span {
                 start: 4,
-                end: 5,
+                end: 7,
             },
         },
     ],

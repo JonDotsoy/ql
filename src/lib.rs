@@ -61,22 +61,24 @@ impl QL {
         let source_cursor = &mut SourceCursor::new(payload);
         let mut tokens = Vec::<Token>::new();
 
-        let trim_matches_fn = |char| matches!(char, ' ' | '\t');
-        let open_keyword_matches_fn = |char| matches!(char, '_'|'a' ..= 'z' | 'A' ..= 'Z' );
-        let keyword_matches_fn = |char| matches!(char, '_'|'0'..='9'|'a' ..= 'z' | 'A' ..= 'Z' );
-        let open_numeric_matches_fn = |char| matches!(char, '0'..='9');
-        let numeric_matches_fn = |char| matches!(char, '0'..='9' | '_');
-        let dot_matches_fn = |char| matches!(char, '.');
-        let operation_matches_fn = |char| matches!(char, '*' | '-' | '/' | '+' | '|');
-        let string_matches_fn = |char| matches!(char, '\"');
-        let colon_matches_fn = |char| matches!(char, ':');
-        let open_parenthesis_matches_fn = |char| matches!(char, '(');
-        let close_parenthesis_matches_fn = |char| matches!(char, ')');
-        let equal_matches_fn = |char| matches!(char, '=');
-        let open_bracket_matches_fn = |char| matches!(char, '[');
-        let close_bracket_matches_fn = |char| matches!(char, ']');
-        let not_string_matches_fn = |char| !matches!(char, '\"');
-        let newline_matches_fn = |char| matches!(char, '\r' | '\n');
+        let ref trim_matches_fn = |char| matches!(char, ' ' | '\t');
+        let ref open_keyword_matches_fn = |char| matches!(char, '_'|'a' ..= 'z' | 'A' ..= 'Z'|'$' );
+        let ref keyword_matches_fn =
+            |char| matches!(char, '_'|'0'..='9'|'a' ..= 'z' | 'A' ..= 'Z'|'$' );
+        let ref open_numeric_matches_fn = |char| matches!(char, '0'..='9');
+        let ref numeric_matches_fn = |char| matches!(char, '0'..='9' | '_');
+        let ref dot_matches_fn = |char| matches!(char, '.');
+        let ref operation_matches_fn =
+            |char| matches!(char, '*' | '-' | '/' | '+' | '|' | '>' | '<');
+        let ref string_matches_fn = |char| matches!(char, '\"');
+        let ref colon_matches_fn = |char| matches!(char, ':');
+        let ref open_parenthesis_matches_fn = |char| matches!(char, '(');
+        let ref close_parenthesis_matches_fn = |char| matches!(char, ')');
+        let ref equal_matches_fn = |char| matches!(char, '=');
+        let ref open_bracket_matches_fn = |char| matches!(char, '[');
+        let ref close_bracket_matches_fn = |char| matches!(char, ']');
+        let ref not_string_matches_fn = |char| !matches!(char, '\"');
+        let ref newline_matches_fn = |char| matches!(char, '\r' | '\n');
 
         while let Some(_) = source_cursor.current() {
             if QL::lexer_model_by_char_test(source_cursor, trim_matches_fn) {

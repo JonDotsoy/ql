@@ -2,7 +2,7 @@
 extern crate assert_matches;
 
 #[cfg(test)]
-mod tekenizer_test {
+mod tekenizer_tests {
 
     use insta::assert_debug_snapshot;
     use ql::QL;
@@ -100,6 +100,38 @@ mod tekenizer_test {
     #[test]
     fn tekenizer_lexer_query_1() {
         let payload = "ctx.var_name:123 ";
+        let ref tokens = QL::lexer(payload);
+        assert_debug_snapshot!(tokens);
+    }
+
+    #[test]
+    fn tokenizer_lexer_sample_1() {
+        let payload = "search value";
+        let ref tokens = QL::lexer(payload);
+        assert_debug_snapshot!(tokens);
+    }
+
+    #[test]
+    fn tokenizer_lexer_sample_2() {
+        let payload = "search value condition:";
+        let ref tokens = QL::lexer(payload);
+        assert_debug_snapshot!(tokens);
+    }
+
+    #[test]
+    fn tokenizer_lexer_sample_3() {
+        let payload = r#"search value condition: "value""#;
+        let ref tokens = QL::lexer(payload);
+        assert_debug_snapshot!(tokens);
+    }
+
+    #[test]
+    fn tokenizer_lexer_sample_4() {
+        let payload = r#"
+            search value
+            condition: "value"
+            context.condition > "value"
+        "#;
         let ref tokens = QL::lexer(payload);
         assert_debug_snapshot!(tokens);
     }

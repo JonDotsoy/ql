@@ -1,31 +1,31 @@
 ---
-source: tests/tekenizer.rs
+source: tests/tekenizer_tests.rs
 expression: tokens
 ---
 Ok(
     [
         Token {
             kind: "numeric",
-            raw: "9_123_123",
+            raw: "9",
             span: Span {
                 start: 0,
-                end: 9,
+                end: 1,
             },
         },
         Token {
             kind: "dot",
             raw: ".",
             span: Span {
-                start: 9,
-                end: 10,
+                start: 1,
+                end: 2,
             },
         },
         Token {
             kind: "numeric",
-            raw: "122_123_943",
+            raw: "12",
             span: Span {
-                start: 10,
-                end: 21,
+                start: 2,
+                end: 4,
             },
         },
     ],

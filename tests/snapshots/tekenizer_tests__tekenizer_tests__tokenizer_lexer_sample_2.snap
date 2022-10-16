@@ -1,0 +1,40 @@
+---
+source: tests/tekenizer_tests.rs
+expression: tokens
+---
+Ok(
+    [
+        Token {
+            kind: "keyword",
+            raw: "search",
+            span: Span {
+                start: 0,
+                end: 6,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "value",
+            span: Span {
+                start: 7,
+                end: 12,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "condition",
+            span: Span {
+                start: 13,
+                end: 22,
+            },
+        },
+        Token {
+            kind: "colon",
+            raw: ":",
+            span: Span {
+                start: 22,
+                end: 23,
+            },
+        },
+    ],
+)

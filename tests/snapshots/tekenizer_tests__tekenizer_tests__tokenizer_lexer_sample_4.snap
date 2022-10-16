@@ -1,0 +1,120 @@
+---
+source: tests/tekenizer_tests.rs
+expression: tokens
+---
+Ok(
+    [
+        Token {
+            kind: "newline",
+            raw: "\n",
+            span: Span {
+                start: 0,
+                end: 1,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "search",
+            span: Span {
+                start: 13,
+                end: 19,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "value",
+            span: Span {
+                start: 20,
+                end: 25,
+            },
+        },
+        Token {
+            kind: "newline",
+            raw: "\n",
+            span: Span {
+                start: 25,
+                end: 26,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "condition",
+            span: Span {
+                start: 38,
+                end: 47,
+            },
+        },
+        Token {
+            kind: "colon",
+            raw: ":",
+            span: Span {
+                start: 47,
+                end: 48,
+            },
+        },
+        Token {
+            kind: "string",
+            raw: "value",
+            span: Span {
+                start: 50,
+                end: 55,
+            },
+        },
+        Token {
+            kind: "newline",
+            raw: "\n",
+            span: Span {
+                start: 56,
+                end: 57,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "context",
+            span: Span {
+                start: 69,
+                end: 76,
+            },
+        },
+        Token {
+            kind: "dot",
+            raw: ".",
+            span: Span {
+                start: 76,
+                end: 77,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "condition",
+            span: Span {
+                start: 77,
+                end: 86,
+            },
+        },
+        Token {
+            kind: "operation",
+            raw: ">",
+            span: Span {
+                start: 87,
+                end: 88,
+            },
+        },
+        Token {
+            kind: "string",
+            raw: "value",
+            span: Span {
+                start: 90,
+                end: 95,
+            },
+        },
+        Token {
+            kind: "newline",
+            raw: "\n",
+            span: Span {
+                start: 96,
+                end: 97,
+            },
+        },
+    ],
+)
