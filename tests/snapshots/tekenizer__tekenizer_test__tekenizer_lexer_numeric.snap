@@ -1,0 +1,16 @@
+---
+source: tests/tekenizer.rs
+expression: tokens
+---
+Ok(
+    [
+        Token {
+            kind: "numeric",
+            raw: "9",
+            span: Span {
+                start: 0,
+                end: 1,
+            },
+        },
+    ],
+)

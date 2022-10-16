@@ -1,0 +1,32 @@
+---
+source: tests/tekenizer.rs
+expression: tokens
+---
+Ok(
+    [
+        Token {
+            kind: "keyword",
+            raw: "abc",
+            span: Span {
+                start: 0,
+                end: 3,
+            },
+        },
+        Token {
+            kind: "newline",
+            raw: "\n",
+            span: Span {
+                start: 3,
+                end: 4,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "def",
+            span: Span {
+                start: 4,
+                end: 7,
+            },
+        },
+    ],
+)

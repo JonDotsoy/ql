@@ -1,0 +1,56 @@
+---
+source: tests/tekenizer.rs
+expression: tokens
+---
+Ok(
+    [
+        Token {
+            kind: "open_parenthesis",
+            raw: "(",
+            span: Span {
+                start: 0,
+                end: 1,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "var_1",
+            span: Span {
+                start: 1,
+                end: 6,
+            },
+        },
+        Token {
+            kind: "close_parenthesis",
+            raw: ")",
+            span: Span {
+                start: 6,
+                end: 7,
+            },
+        },
+        Token {
+            kind: "open_bracket",
+            raw: "[",
+            span: Span {
+                start: 7,
+                end: 8,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "var_2",
+            span: Span {
+                start: 8,
+                end: 13,
+            },
+        },
+        Token {
+            kind: "close_bracket",
+            raw: "]",
+            span: Span {
+                start: 13,
+                end: 14,
+            },
+        },
+    ],
+)
