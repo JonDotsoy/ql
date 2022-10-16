@@ -9,6 +9,8 @@ An language to make a search instruction. This language provides a set of defini
 
 ### Demo 1
 
+![](./docs/assets/search%20box%20-%20demo-1.png)
+
 ```
 "search value"
 ```
@@ -38,11 +40,14 @@ function filter(item: Item) {
 
 ### Demo 2
 
+![](./docs/assets/search%20box%20-%20demo-2.png)
+
 ```
 "search value condition:"
 ```
 
-***json:*** 
+**JSON:***
+
 ```json
 [
   ["search value condition:"]
@@ -66,6 +71,8 @@ function filter(item: Item) {
 ```
 
 ### Demo 3
+
+![](./docs/assets/search%20box%20-%20demo-3.png)
 
 ```
 "search value" condition: "value"
@@ -99,6 +106,8 @@ function filter(item: Item) {
 
 
 ### Demo 4
+
+![](./docs/assets/search%20box%20-%20demo-4.png)
 
 ```
 "search value"
