@@ -29,7 +29,7 @@ Ok(
             },
         },
         Token {
-            kind: "open_bracket",
+            kind: "open_square_bracket",
             raw: "[",
             span: Span {
                 start: 7,
@@ -45,7 +45,7 @@ Ok(
             },
         },
         Token {
-            kind: "close_bracket",
+            kind: "close_square_bracket",
             raw: "]",
             span: Span {
                 start: 13,

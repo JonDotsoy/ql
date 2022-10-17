@@ -142,4 +142,32 @@ mod tekenizer_tests {
         let ref tokens = Tokenizer::lexer(payload);
         assert_debug_snapshot!(tokens);
     }
+
+    #[test]
+    fn tokenizer_lexer_string_template_1() {
+        let payload = "`a${`b${\"c\"}d`}e`";
+        let ref tokens = Tokenizer::lexer(payload);
+        assert_debug_snapshot!(tokens);
+    }
+
+    #[test]
+    fn tokenizer_lexer_string_template_2() {
+        let payload = "`a$\\`b$\"c\"}d\\`}e`";
+        let ref tokens = Tokenizer::lexer(payload);
+        assert_debug_snapshot!(tokens);
+    }
+
+    #[test]
+    fn tokenizer_lexer_string_template_3() {
+        let payload = r#"`first string ${keyword} second string ${12_20 + `${"hola"}`}`"#;
+        let ref tokens = Tokenizer::lexer(payload);
+        assert_debug_snapshot!(tokens);
+    }
+
+    #[test]
+    fn tokenizer_lexer_string_template_4() {
+        let payload = r#"`a${b{c}d}e`"#;
+        let ref tokens = Tokenizer::lexer(payload);
+        assert_debug_snapshot!(tokens);
+    }
 }

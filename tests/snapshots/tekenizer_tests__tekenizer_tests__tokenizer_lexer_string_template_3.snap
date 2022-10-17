@@ -1,0 +1,144 @@
+---
+source: tests/tekenizer_tests.rs
+expression: tokens
+---
+Ok(
+    [
+        Token {
+            kind: "template",
+            raw: "first string ",
+            span: Span {
+                start: 1,
+                end: 14,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "$",
+            span: Span {
+                start: 14,
+                end: 15,
+            },
+        },
+        Token {
+            kind: "open_curly_bracket",
+            raw: "{",
+            span: Span {
+                start: 15,
+                end: 16,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "keyword",
+            span: Span {
+                start: 16,
+                end: 23,
+            },
+        },
+        Token {
+            kind: "close_curly_bracket",
+            raw: "}",
+            span: Span {
+                start: 23,
+                end: 24,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "second",
+            span: Span {
+                start: 25,
+                end: 31,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "string",
+            span: Span {
+                start: 32,
+                end: 38,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "$",
+            span: Span {
+                start: 39,
+                end: 40,
+            },
+        },
+        Token {
+            kind: "open_curly_bracket",
+            raw: "{",
+            span: Span {
+                start: 40,
+                end: 41,
+            },
+        },
+        Token {
+            kind: "numeric",
+            raw: "12_20",
+            span: Span {
+                start: 41,
+                end: 46,
+            },
+        },
+        Token {
+            kind: "operation",
+            raw: "+",
+            span: Span {
+                start: 47,
+                end: 48,
+            },
+        },
+        Token {
+            kind: "template",
+            raw: "",
+            span: Span {
+                start: 50,
+                end: 50,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "$",
+            span: Span {
+                start: 50,
+                end: 51,
+            },
+        },
+        Token {
+            kind: "open_curly_bracket",
+            raw: "{",
+            span: Span {
+                start: 51,
+                end: 52,
+            },
+        },
+        Token {
+            kind: "string",
+            raw: "hola",
+            span: Span {
+                start: 53,
+                end: 57,
+            },
+        },
+        Token {
+            kind: "close_curly_bracket",
+            raw: "}",
+            span: Span {
+                start: 58,
+                end: 59,
+            },
+        },
+        Token {
+            kind: "template",
+            raw: "}",
+            span: Span {
+                start: 60,
+                end: 61,
+            },
+        },
+    ],
+)
