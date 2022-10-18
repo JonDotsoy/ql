@@ -1,15 +1,5 @@
-#[derive(Debug)]
-pub struct Span {
-    pub start: usize,
-    pub end: usize,
-}
-
-#[derive(Debug)]
-pub struct Token {
-    pub kind: String,
-    pub raw: String,
-    pub span: Span,
-}
+mod token;
+use self::token::{Span, Token};
 
 pub struct SourceCursor {
     source: String,
@@ -113,7 +103,7 @@ impl SourceCursor {
     }
 }
 
-pub struct Tokenizer {}
+pub struct Tokenizer;
 
 #[derive(Debug)]
 pub enum LexerError {
@@ -142,7 +132,7 @@ impl Tokenizer {
         let ref numeric_matches_fn = |char| matches!(char, '0'..='9' | '_');
         let ref dot_matches_fn = |char| matches!(char, '.');
         let ref operation_matches_fn =
-            |char| matches!(char, '*' | '-' | '/' | '+' | '|' | '>' | '<');
+            |char| matches!(char, '*' | '-' | '/' | '+' | '|' | '&' | '>' | '<');
         let ref string_matches_fn = |char| matches!(char, '\"');
         let ref colon_matches_fn = |char| matches!(char, ':');
         let ref open_curly_bracket_matches_fn = |char| matches!(char, '{');
@@ -493,16 +483,14 @@ impl Tokenizer {
             .unwrap_or("")
             .to_string();
 
-        if value.len() > 0 {
-            tokens.push(Token {
-                kind: kind.to_string(),
-                raw: value,
-                span: Span {
-                    start: span_start,
-                    end: span_end,
-                },
-            });
-        }
+        tokens.push(Token {
+            kind: kind.to_string(),
+            raw: value,
+            span: Span {
+                start: span_start,
+                end: span_end,
+            },
+        });
 
         Ok(tokens)
     }

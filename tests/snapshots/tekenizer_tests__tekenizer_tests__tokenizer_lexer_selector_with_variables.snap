@@ -1,0 +1,80 @@
+---
+source: tests/tekenizer_tests.rs
+expression: tokens
+---
+Ok(
+    [
+        Token {
+            kind: "newline",
+            raw: "\n",
+            span: Span {
+                start: 0,
+                end: 1,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "selector1",
+            span: Span {
+                start: 13,
+                end: 22,
+            },
+        },
+        Token {
+            kind: "dot",
+            raw: ".",
+            span: Span {
+                start: 22,
+                end: 23,
+            },
+        },
+        Token {
+            kind: "open_square_bracket",
+            raw: "[",
+            span: Span {
+                start: 23,
+                end: 24,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "$variable1",
+            span: Span {
+                start: 24,
+                end: 34,
+            },
+        },
+        Token {
+            kind: "close_square_bracket",
+            raw: "]",
+            span: Span {
+                start: 34,
+                end: 35,
+            },
+        },
+        Token {
+            kind: "dot",
+            raw: ".",
+            span: Span {
+                start: 35,
+                end: 36,
+            },
+        },
+        Token {
+            kind: "keyword",
+            raw: "name",
+            span: Span {
+                start: 36,
+                end: 40,
+            },
+        },
+        Token {
+            kind: "newline",
+            raw: "\n",
+            span: Span {
+                start: 40,
+                end: 41,
+            },
+        },
+    ],
+)

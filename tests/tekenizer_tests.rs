@@ -166,8 +166,31 @@ mod tekenizer_tests {
 
     #[test]
     fn tokenizer_lexer_string_template_4() {
+        todo!();
         let payload = r#"`a${b{c}d}e`"#;
         let ref tokens = Tokenizer::lexer(payload);
+        assert_debug_snapshot!(tokens);
+    }
+
+    #[test]
+    fn tokenizer_lexer_selector_with_variables() {
+        let payload = r#"
+            selector1.[$variable1].name
+        "#;
+        let tokens = Tokenizer::lexer(payload);
+        assert_debug_snapshot!(tokens);
+    }
+
+    #[test]
+    fn tokenizer_lexer_selector_with_variables_2() {
+        todo!();
+        let payload = r#"
+            $.user = $VAR && (
+                $.tag[$TAG_NAME] = true || 
+                $.tag[`${TAG_NAME}_alt`] = true
+            )
+        "#;
+        let tokens = Tokenizer::lexer(payload);
         assert_debug_snapshot!(tokens);
     }
 }
