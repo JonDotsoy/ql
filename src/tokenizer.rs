@@ -1,114 +1,19 @@
+mod at_direction;
+mod bind_options;
+mod direction;
+mod lexer_error;
+mod lexer_options;
+mod source_cursor;
 mod token;
+
+use self::bind_options::BindOptions;
+use self::direction::Direction;
+use self::lexer_error::LexerError;
+use self::lexer_options::LexerOptions;
+use self::source_cursor::SourceCursor;
 use self::token::{Span, Token};
 
-pub struct SourceCursor {
-    source: String,
-    pos: usize,
-}
-
-struct BindOptions {
-    /// If detect the char [`\`] indicate the next char is literal.
-    scape_char: bool,
-}
-
-impl BindOptions {
-    /// Creates a new [`BindOptions`].
-    fn new() -> Self {
-        Self { scape_char: false }
-    }
-
-    fn set_scape_char(&mut self, scape_char: bool) -> &mut Self {
-        self.scape_char = scape_char;
-        self
-    }
-}
-
-impl Default for BindOptions {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-pub struct LexerOptions {
-    pub break_by_close_square_bracket: bool,
-    pub break_by_close_parenthesis: bool,
-    pub break_by_close_curly_bracket: bool,
-}
-
-impl LexerOptions {
-    fn set_break_by_close_square_bracket(
-        &mut self,
-        break_by_close_square_bracket: bool,
-    ) -> &mut Self {
-        self.break_by_close_square_bracket = break_by_close_square_bracket;
-        self
-    }
-    fn set_break_by_close_parenthesis(&mut self, break_by_close_parenthesis: bool) -> &mut Self {
-        self.break_by_close_parenthesis = break_by_close_parenthesis;
-        self
-    }
-    fn set_break_by_close_curly_bracket(
-        &mut self,
-        break_by_close_curly_bracket: bool,
-    ) -> &mut Self {
-        self.break_by_close_curly_bracket = break_by_close_curly_bracket;
-        self
-    }
-}
-
-impl Default for LexerOptions {
-    fn default() -> Self {
-        Self {
-            break_by_close_square_bracket: false,
-            break_by_close_parenthesis: false,
-            break_by_close_curly_bracket: false,
-        }
-    }
-}
-
-impl SourceCursor {
-    pub fn new<A: ToString>(payload: A) -> Self {
-        Self {
-            pos: 0,
-            source: payload.to_string(),
-        }
-    }
-
-    pub fn at_current_char(&self) -> Option<char> {
-        self.source.chars().nth(self.pos)
-    }
-
-    pub fn current(&self) -> Option<(usize, char)> {
-        if let Some(s) = self.at_current_char() {
-            Some((self.pos, s))
-        } else {
-            None
-        }
-    }
-
-    pub fn next(&mut self) -> Option<(usize, char)> {
-        let current = self.current();
-        self.pos = self.pos + 1;
-        current
-    }
-
-    pub fn prev(&mut self) -> Option<(usize, char)> {
-        let current = self.current();
-        self.pos = self.pos - 1;
-        current
-    }
-
-    pub fn next_string(&self, chunk_len: usize) -> String {
-        self.source.chars().skip(self.pos).take(chunk_len).collect()
-    }
-}
-
 pub struct Tokenizer;
-
-#[derive(Debug)]
-pub enum LexerError {
-    SymbolInvalid(Option<(usize, char)>),
-}
 
 impl Tokenizer {
     pub fn lexer<A: ToString>(payload: A) -> Result<Vec<Token>, LexerError> {
@@ -121,31 +26,52 @@ impl Tokenizer {
     fn lexer_w(
         source_cursor: &mut SourceCursor,
         options: &mut LexerOptions,
-    ) -> Result<Vec<Token>, LexerError> {
+    ) -> Result<Vec<Token>, lexer_error::LexerError> {
         let mut tokens = Vec::<Token>::new();
 
-        let ref space_matches_fn = |char| matches!(char, ' ' | '\t');
-        let ref open_keyword_matches_fn = |char| matches!(char, '$'|'_'|'a' ..= 'z' | 'A' ..= 'Z' );
-        let ref keyword_matches_fn =
-            |char| matches!(char, '_'|'$'|'0'..='9'|'a' ..= 'z' | 'A' ..= 'Z' );
-        let ref open_numeric_matches_fn = |char| matches!(char, '0'..='9');
-        let ref numeric_matches_fn = |char| matches!(char, '0'..='9' | '_');
-        let ref dot_matches_fn = |char| matches!(char, '.');
-        let ref operation_matches_fn =
-            |char| matches!(char, '*' | '-' | '/' | '+' | '|' | '&' | '>' | '<');
-        let ref string_matches_fn = |char| matches!(char, '\"');
-        let ref colon_matches_fn = |char| matches!(char, ':');
-        let ref open_curly_bracket_matches_fn = |char| matches!(char, '{');
-        let ref close_curly_bracket_matches_fn = |char| matches!(char, '}');
-        let ref open_parenthesis_matches_fn = |char| matches!(char, '(');
-        let ref close_parenthesis_matches_fn = |char| matches!(char, ')');
-        let ref equal_matches_fn = |char| matches!(char, '=');
-        let ref open_square_bracket_matches_fn = |char| matches!(char, '[');
-        let ref close_square_bracket_matches_fn = |char| matches!(char, ']');
-        let ref not_string_matches_fn = |char| !matches!(char, '\"');
-        let ref newline_matches_fn = |char| matches!(char, '\r' | '\n');
-        let ref open_template_matches_fn = |char| matches!(char, '`');
-        let ref template_matches_fn = |char| !matches!(char, '`');
+        let ref space_matches_fn =
+            |source_cursor: &SourceCursor| matches!(source_cursor.get_current_char(), ' ' | '\t');
+        let ref open_keyword_matches_fn = |source_cursor: &SourceCursor| matches!(source_cursor.get_current_char(), '$'|'_'|'a' ..= 'z' | 'A' ..= 'Z' );
+        let ref keyword_matches_fn = |source_cursor: &SourceCursor| matches!(source_cursor.get_current_char(), '_'|'$'|'0'..='9'|'a' ..= 'z' | 'A' ..= 'Z' );
+        let ref open_numeric_matches_fn =
+            |source_cursor: &SourceCursor| matches!(source_cursor.get_current_char(), '0'..='9');
+        let ref numeric_matches_fn = |source_cursor: &SourceCursor| {
+            matches!(source_cursor.get_current_char(), '0'..='9' | '_')
+        };
+        let ref dot_matches_fn =
+            |source_cursor: &SourceCursor| matches!(source_cursor.get_current_char(), '.');
+        let ref operation_matches_fn = |source_cursor: &SourceCursor| {
+            matches!(
+                source_cursor.get_current_char(),
+                '*' | '-' | '/' | '+' | '|' | '&' | '>' | '<'
+            )
+        };
+        let ref string_matches_fn =
+            |source_cursor: &SourceCursor| matches!(source_cursor.get_current_char(), '\"');
+        let ref colon_matches_fn =
+            |source_cursor: &SourceCursor| matches!(source_cursor.get_current_char(), ':');
+        let ref open_curly_bracket_matches_fn =
+            |source_cursor: &SourceCursor| matches!(source_cursor.get_current_char(), '{');
+        let ref close_curly_bracket_matches_fn =
+            |source_cursor: &SourceCursor| matches!(source_cursor.get_current_char(), '}');
+        let ref open_parenthesis_matches_fn =
+            |source_cursor: &SourceCursor| matches!(source_cursor.get_current_char(), '(');
+        let ref close_parenthesis_matches_fn =
+            |source_cursor: &SourceCursor| matches!(source_cursor.get_current_char(), ')');
+        let ref equal_matches_fn =
+            |source_cursor: &SourceCursor| matches!(source_cursor.get_current_char(), '=');
+        let ref open_square_bracket_matches_fn =
+            |source_cursor: &SourceCursor| matches!(source_cursor.get_current_char(), '[');
+        let ref close_square_bracket_matches_fn =
+            |source_cursor: &SourceCursor| matches!(source_cursor.get_current_char(), ']');
+        let ref not_string_matches_fn =
+            |source_cursor: &SourceCursor| !matches!(source_cursor.get_current_char(), '\"');
+        let ref newline_matches_fn =
+            |source_cursor: &SourceCursor| matches!(source_cursor.get_current_char(), '\r' | '\n');
+        let ref open_template_matches_fn =
+            |source_cursor: &SourceCursor| matches!(source_cursor.get_current_char(), '`');
+        let ref template_matches_fn =
+            |source_cursor: &SourceCursor| !matches!(source_cursor.get_current_char(), '`');
 
         while let Some(_) = source_cursor.current() {
             if Tokenizer::lexer_model_by_char_test(source_cursor, space_matches_fn) {
@@ -158,15 +84,108 @@ impl Tokenizer {
                 continue;
             }
 
+            if Tokenizer::lexer_model_by_char_test(source_cursor, close_curly_bracket_matches_fn) {
+                if options.template_break_by_close_curly_bracket {
+                    tokens.push(source_cursor.create_token(
+                        "template_close_expression",
+                        Direction::Current,
+                        Direction::Next(1),
+                    ));
+                    break;
+                }
+                let response_tokens = Tokenizer::lexer_model_by_char_bind(
+                    source_cursor,
+                    "close_curly_bracket",
+                    close_curly_bracket_matches_fn,
+                    None,
+                )?;
+                tokens.extend(response_tokens);
+                if options.break_by_close_curly_bracket {
+                    break;
+                }
+                continue;
+            }
+
+            if Tokenizer::lexer_model_by_char_test(source_cursor, close_parenthesis_matches_fn) {
+                let response_tokens = Tokenizer::lexer_model_by_char_bind(
+                    source_cursor,
+                    "close_parenthesis",
+                    close_parenthesis_matches_fn,
+                    None,
+                )?;
+                tokens.extend(response_tokens);
+                if options.break_by_close_parenthesis {
+                    break;
+                }
+                continue;
+            }
+
+            if Tokenizer::lexer_model_by_char_test(source_cursor, close_square_bracket_matches_fn) {
+                let response_tokens = Tokenizer::lexer_model_by_char_bind(
+                    source_cursor,
+                    "close_square_bracket",
+                    close_square_bracket_matches_fn,
+                    None,
+                )?;
+                tokens.extend(response_tokens);
+                if options.break_by_close_square_bracket {
+                    break;
+                }
+                continue;
+            }
+
+            if Tokenizer::lexer_model_by_char_test(source_cursor, open_curly_bracket_matches_fn) {
+                let response_tokens = Tokenizer::lexer_model_by_char_bind(
+                    source_cursor,
+                    "open_curly_bracket",
+                    open_curly_bracket_matches_fn,
+                    None,
+                )?;
+                tokens.extend(response_tokens);
+                tokens.extend(Tokenizer::lexer_w(
+                    source_cursor,
+                    &mut LexerOptions::default(),
+                )?);
+                continue;
+            }
+
+            if Tokenizer::lexer_model_by_char_test(source_cursor, open_parenthesis_matches_fn) {
+                let response_tokens = Tokenizer::lexer_model_by_char_bind(
+                    source_cursor,
+                    "open_parenthesis",
+                    open_parenthesis_matches_fn,
+                    None,
+                )?;
+                tokens.extend(response_tokens);
+                tokens.extend(Tokenizer::lexer_w(
+                    source_cursor,
+                    &mut LexerOptions::default(),
+                )?);
+                continue;
+            }
+
+            if Tokenizer::lexer_model_by_char_test(source_cursor, open_square_bracket_matches_fn) {
+                let response_tokens = Tokenizer::lexer_model_by_char_bind(
+                    source_cursor,
+                    "open_square_bracket",
+                    open_square_bracket_matches_fn,
+                    None,
+                )?;
+                tokens.extend(response_tokens);
+                tokens.extend(Tokenizer::lexer_w(
+                    source_cursor,
+                    &mut LexerOptions::default(),
+                )?);
+                continue;
+            }
+
             if Tokenizer::lexer_model_by_char_test(source_cursor, open_template_matches_fn) {
-                source_cursor.next();
                 let response_tokens = Tokenizer::lexer_model_by_char_bind_template(
                     source_cursor,
                     "template",
                     template_matches_fn,
                     Some(&BindOptions::new().set_scape_char(true)),
                 )?;
-                source_cursor.next();
                 tokens.extend(response_tokens);
                 continue;
             }
@@ -199,93 +218,6 @@ impl Tokenizer {
                     None,
                 )?;
                 tokens.extend(response_tokens);
-                continue;
-            }
-
-            if Tokenizer::lexer_model_by_char_test(source_cursor, open_curly_bracket_matches_fn) {
-                let response_tokens = Tokenizer::lexer_model_by_char_bind(
-                    source_cursor,
-                    "open_curly_bracket",
-                    open_curly_bracket_matches_fn,
-                    None,
-                )?;
-                tokens.extend(response_tokens);
-                tokens.extend(Tokenizer::lexer_w(
-                    source_cursor,
-                    &mut LexerOptions::default(),
-                )?);
-                continue;
-            }
-
-            if Tokenizer::lexer_model_by_char_test(source_cursor, close_curly_bracket_matches_fn) {
-                let response_tokens = Tokenizer::lexer_model_by_char_bind(
-                    source_cursor,
-                    "close_curly_bracket",
-                    close_curly_bracket_matches_fn,
-                    None,
-                )?;
-                tokens.extend(response_tokens);
-                if options.break_by_close_curly_bracket {
-                    break;
-                }
-                continue;
-            }
-
-            if Tokenizer::lexer_model_by_char_test(source_cursor, open_parenthesis_matches_fn) {
-                let response_tokens = Tokenizer::lexer_model_by_char_bind(
-                    source_cursor,
-                    "open_parenthesis",
-                    open_parenthesis_matches_fn,
-                    None,
-                )?;
-                tokens.extend(response_tokens);
-                tokens.extend(Tokenizer::lexer_w(
-                    source_cursor,
-                    &mut LexerOptions::default(),
-                )?);
-                continue;
-            }
-
-            if Tokenizer::lexer_model_by_char_test(source_cursor, close_parenthesis_matches_fn) {
-                let response_tokens = Tokenizer::lexer_model_by_char_bind(
-                    source_cursor,
-                    "close_parenthesis",
-                    close_parenthesis_matches_fn,
-                    None,
-                )?;
-                tokens.extend(response_tokens);
-                if options.break_by_close_parenthesis {
-                    break;
-                }
-                continue;
-            }
-
-            if Tokenizer::lexer_model_by_char_test(source_cursor, open_square_bracket_matches_fn) {
-                let response_tokens = Tokenizer::lexer_model_by_char_bind(
-                    source_cursor,
-                    "open_square_bracket",
-                    open_square_bracket_matches_fn,
-                    None,
-                )?;
-                tokens.extend(response_tokens);
-                tokens.extend(Tokenizer::lexer_w(
-                    source_cursor,
-                    &mut LexerOptions::default(),
-                )?);
-                continue;
-            }
-
-            if Tokenizer::lexer_model_by_char_test(source_cursor, close_square_bracket_matches_fn) {
-                let response_tokens = Tokenizer::lexer_model_by_char_bind(
-                    source_cursor,
-                    "close_square_bracket",
-                    close_square_bracket_matches_fn,
-                    None,
-                )?;
-                tokens.extend(response_tokens);
-                if options.break_by_close_square_bracket {
-                    break;
-                }
                 continue;
             }
 
@@ -346,7 +278,9 @@ impl Tokenizer {
                 continue;
             }
 
-            return Err(LexerError::SymbolInvalid(source_cursor.current()));
+            return Err(lexer_error::LexerError::SymbolInvalid(
+                source_cursor.current(),
+            ));
 
             // let other_symbol = Token {
             //     kind: "symbol".to_string(),
@@ -369,23 +303,23 @@ impl Tokenizer {
         Ok(tokens)
     }
 
-    fn lexer_model_by_char_test<F: Fn(char) -> bool>(
+    fn lexer_model_by_char_test<F: Fn(&SourceCursor) -> bool>(
         source_cursor: &mut SourceCursor,
         matches_fn: F,
     ) -> bool {
-        if let Some(c) = source_cursor.at_current_char() {
-            matches_fn(c)
+        if let Some(_) = source_cursor.at_current_char() {
+            matches_fn(&source_cursor)
         } else {
             false
         }
     }
 
-    fn lexer_model_by_char_bind<A: ToString, F: Fn(char) -> bool>(
+    fn lexer_model_by_char_bind<A: ToString, F: Fn(&SourceCursor) -> bool>(
         source_cursor: &mut SourceCursor,
         kind: A,
         matches_fn: F,
         options: Option<&BindOptions>,
-    ) -> Result<Vec<Token>, LexerError> {
+    ) -> Result<Vec<Token>, lexer_error::LexerError> {
         let scape_char = match options {
             Some(bind_options) => bind_options.scape_char,
             _ => false,
@@ -399,7 +333,7 @@ impl Tokenizer {
                 source_cursor.next();
                 continue;
             }
-            if matches_fn(char) {
+            if matches_fn(source_cursor) {
                 source_cursor.next();
                 continue;
             }
@@ -424,9 +358,9 @@ impl Tokenizer {
         }])
     }
 
-    fn lexer_model_by_char_bind_template<A: ToString, F: Fn(char) -> bool>(
+    fn lexer_model_by_char_bind_template<A: ToString, F: Fn(&SourceCursor) -> bool>(
         source_cursor: &mut SourceCursor,
-        kind: A,
+        _kind: A,
         matches_fn: F,
         options: Option<&BindOptions>,
     ) -> Result<Vec<Token>, LexerError> {
@@ -436,38 +370,34 @@ impl Tokenizer {
             _ => false,
         };
 
+        tokens.push(source_cursor.create_token(
+            "template_start",
+            Direction::Current,
+            Direction::Next(1),
+        ));
+
         let mut span_start = source_cursor.pos;
 
-        while let Some((_, char)) = source_cursor.current() {
-            if scape_char && char == '\\' {
-                source_cursor.next();
-                source_cursor.next();
+        while let Some(_) = source_cursor.current() {
+            if scape_char && source_cursor.get_current_char() == '\\' {
+                source_cursor.move_direction(Direction::Next(2));
                 continue;
             }
 
-            if source_cursor.next_string(2) == "${".to_string() {
-                let value = source_cursor
-                    .source
-                    .get(span_start..source_cursor.pos)
-                    .unwrap()
-                    .to_string();
-                tokens.push(Token {
-                    kind: kind.to_string(),
-                    raw: value,
-                    span: Span {
-                        start: span_start,
-                        end: source_cursor.pos,
-                    },
-                });
+            if source_cursor.get(0, 2) == "${" {
+                tokens.push(source_cursor.create_token("template", Direction::Pos(span_start), 0));
+                tokens.push(source_cursor.create_token("template_start_expression", 0, 2));
+
                 tokens.extend(Tokenizer::lexer_w(
                     source_cursor,
-                    LexerOptions::default().set_break_by_close_curly_bracket(true),
+                    LexerOptions::default().set_template_break_by_close_curly_bracket(true),
                 )?);
+
                 span_start = source_cursor.pos;
                 continue;
             }
 
-            if matches_fn(char) {
+            if matches_fn(source_cursor) {
                 source_cursor.next();
                 continue;
             }
@@ -475,22 +405,8 @@ impl Tokenizer {
             break;
         }
 
-        let span_end = source_cursor.pos;
-
-        let value: String = source_cursor
-            .source
-            .get(span_start..span_end)
-            .unwrap_or("")
-            .to_string();
-
-        tokens.push(Token {
-            kind: kind.to_string(),
-            raw: value,
-            span: Span {
-                start: span_start,
-                end: span_end,
-            },
-        });
+        tokens.push(source_cursor.create_token("template", Direction::Pos(span_start), 0));
+        tokens.push(source_cursor.create_token("template_close", 0, 1));
 
         Ok(tokens)
     }

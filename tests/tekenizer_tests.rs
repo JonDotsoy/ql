@@ -144,6 +144,13 @@ mod tekenizer_tests {
     }
 
     #[test]
+    fn tokenizer_lexer_template_1() {
+        let payload = "`abc${3}def`";
+        let ref tokens = Tokenizer::lexer(payload);
+        assert_debug_snapshot!(tokens);
+    }
+
+    #[test]
     fn tokenizer_lexer_string_template_1() {
         let payload = "`a${`b${\"c\"}d`}e`";
         let ref tokens = Tokenizer::lexer(payload);
@@ -166,7 +173,6 @@ mod tekenizer_tests {
 
     #[test]
     fn tokenizer_lexer_string_template_4() {
-        todo!();
         let payload = r#"`a${b{c}d}e`"#;
         let ref tokens = Tokenizer::lexer(payload);
         assert_debug_snapshot!(tokens);
@@ -184,13 +190,49 @@ mod tekenizer_tests {
     #[test]
     fn tokenizer_lexer_selector_with_variables_2() {
         todo!();
-        let payload = r#"
-            $.user = $VAR && (
-                $.tag[$TAG_NAME] = true || 
-                $.tag[`${TAG_NAME}_alt`] = true
-            )
-        "#;
-        let tokens = Tokenizer::lexer(payload);
-        assert_debug_snapshot!(tokens);
+        // let payload = r#"
+        //     $.user = $VAR && (
+        //         $.tag[$TAG_NAME] = true ||
+        //         $.tag[`${TAG_NAME}_alt`] = true
+        //     )
+        // "#;
+        // let tokens = Tokenizer::lexer(payload);
+        // assert_debug_snapshot!(tokens);
+    }
+
+    #[test]
+    fn a() {
+        trait A<'a> {
+            fn get_a(&'a self, from: usize, at: usize) -> &str;
+        }
+
+        impl<'a> A<'a> for &'a str {
+            fn get_a(&'a self, from: usize, at: usize) -> &str {
+                let len = self.len();
+                if at < from {
+                    return "";
+                }
+                let real_from = if from < len { from } else { len };
+                let real_at = if at < len { at } else { len };
+
+                unsafe { self.get_unchecked(real_from..real_at) }
+            }
+        }
+
+        impl<'a> A<'a> for String {
+            fn get_a(&'a self, from: usize, at: usize) -> &str {
+                let len = self.len();
+                if at < from {
+                    return "";
+                }
+                let real_from = if from < len { from } else { len };
+                let real_at = if at < len { at } else { len };
+
+                unsafe { self.get_unchecked(real_from..real_at) }
+            }
+        }
+
+        let chars = "123456".get_a(0, 83);
+        assert_debug_snapshot!(chars)
     }
 }

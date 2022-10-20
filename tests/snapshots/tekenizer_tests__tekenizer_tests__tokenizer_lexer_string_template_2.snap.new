@@ -1,0 +1,33 @@
+---
+source: tests/tekenizer_tests.rs
+assertion_line: 164
+expression: tokens
+---
+Ok(
+    [
+        Token {
+            kind: "template_start",
+            raw: "`",
+            span: Span {
+                start: 0,
+                end: 1,
+            },
+        },
+        Token {
+            kind: "template",
+            raw: "a$\\`b$\"c\"}d\\`}e",
+            span: Span {
+                start: 1,
+                end: 16,
+            },
+        },
+        Token {
+            kind: "template_close",
+            raw: "`",
+            span: Span {
+                start: 16,
+                end: 17,
+            },
+        },
+    ],
+)

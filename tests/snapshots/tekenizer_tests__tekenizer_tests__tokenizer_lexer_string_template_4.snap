@@ -84,5 +84,21 @@ Ok(
                 end: 11,
             },
         },
+        Token {
+            kind: "template",
+            raw: "",
+            span: Span {
+                start: 12,
+                end: 12,
+            },
+        },
+        Token {
+            kind: "template",
+            raw: "",
+            span: Span {
+                start: 13,
+                end: 13,
+            },
+        },
     ],
 )

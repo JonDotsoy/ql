@@ -143,3 +143,9 @@ function filter(item: Item) {
     && item.context.condition > "value"
 }
 ```
+
+## Contribution
+
+Depedencies:
+ - cargo-insta: install with `cargo install cargo-insta`
+
