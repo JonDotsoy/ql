@@ -1,10 +1,11 @@
-mod at_direction;
 mod bind_options;
 mod direction;
 mod lexer_error;
 mod lexer_options;
 mod source_cursor;
+mod to_direction;
 mod token;
+mod value;
 
 use self::bind_options::BindOptions;
 use self::direction::Direction;
@@ -93,13 +94,18 @@ impl Tokenizer {
                     ));
                     break;
                 }
-                let response_tokens = Tokenizer::lexer_model_by_char_bind(
-                    source_cursor,
+                tokens.push(source_cursor.create_token(
                     "close_curly_bracket",
-                    close_curly_bracket_matches_fn,
-                    None,
-                )?;
-                tokens.extend(response_tokens);
+                    Direction::Current,
+                    Direction::Next(1),
+                ));
+                // let response_tokens = Tokenizer::lexer_model_by_char_bind(
+                //     source_cursor,
+                //     "close_curly_bracket",
+                //     close_curly_bracket_matches_fn,
+                //     None,
+                // )?;
+                // tokens.extend(response_tokens);
                 if options.break_by_close_curly_bracket {
                     break;
                 }
@@ -107,13 +113,18 @@ impl Tokenizer {
             }
 
             if Tokenizer::lexer_model_by_char_test(source_cursor, close_parenthesis_matches_fn) {
-                let response_tokens = Tokenizer::lexer_model_by_char_bind(
-                    source_cursor,
+                tokens.push(source_cursor.create_token(
                     "close_parenthesis",
-                    close_parenthesis_matches_fn,
-                    None,
-                )?;
-                tokens.extend(response_tokens);
+                    Direction::Current,
+                    Direction::Next(1),
+                ));
+                // let response_tokens = Tokenizer::lexer_model_by_char_bind(
+                //     source_cursor,
+                //     "close_parenthesis",
+                //     close_parenthesis_matches_fn,
+                //     None,
+                // )?;
+                // tokens.extend(response_tokens);
                 if options.break_by_close_parenthesis {
                     break;
                 }
@@ -121,13 +132,18 @@ impl Tokenizer {
             }
 
             if Tokenizer::lexer_model_by_char_test(source_cursor, close_square_bracket_matches_fn) {
-                let response_tokens = Tokenizer::lexer_model_by_char_bind(
-                    source_cursor,
+                tokens.push(source_cursor.create_token(
                     "close_square_bracket",
-                    close_square_bracket_matches_fn,
-                    None,
-                )?;
-                tokens.extend(response_tokens);
+                    Direction::Current,
+                    Direction::Next(1),
+                ));
+                // let response_tokens = Tokenizer::lexer_model_by_char_bind(
+                //     source_cursor,
+                //     "close_square_bracket",
+                //     close_square_bracket_matches_fn,
+                //     None,
+                // )?;
+                // tokens.extend(response_tokens);
                 if options.break_by_close_square_bracket {
                     break;
                 }
@@ -135,46 +151,61 @@ impl Tokenizer {
             }
 
             if Tokenizer::lexer_model_by_char_test(source_cursor, open_curly_bracket_matches_fn) {
-                let response_tokens = Tokenizer::lexer_model_by_char_bind(
-                    source_cursor,
+                tokens.push(source_cursor.create_token(
                     "open_curly_bracket",
-                    open_curly_bracket_matches_fn,
-                    None,
-                )?;
-                tokens.extend(response_tokens);
+                    Direction::Current,
+                    Direction::Next(1),
+                ));
+                // let response_tokens = Tokenizer::lexer_model_by_char_bind(
+                //     source_cursor,
+                //     "open_curly_bracket",
+                //     open_curly_bracket_matches_fn,
+                //     None,
+                // )?;
+                // tokens.extend(response_tokens);
                 tokens.extend(Tokenizer::lexer_w(
                     source_cursor,
-                    &mut LexerOptions::default(),
+                    &mut LexerOptions::default().set_break_by_close_curly_bracket(true),
                 )?);
                 continue;
             }
 
             if Tokenizer::lexer_model_by_char_test(source_cursor, open_parenthesis_matches_fn) {
-                let response_tokens = Tokenizer::lexer_model_by_char_bind(
-                    source_cursor,
-                    "open_parenthesis",
-                    open_parenthesis_matches_fn,
-                    None,
-                )?;
-                tokens.extend(response_tokens);
+                tokens.push(source_cursor.create_token(
+                    "open_curly_bracket",
+                    Direction::Current,
+                    Direction::Next(1),
+                ));
+                // let response_tokens = Tokenizer::lexer_model_by_char_bind(
+                //     source_cursor,
+                //     "open_parenthesis",
+                //     open_parenthesis_matches_fn,
+                //     None,
+                // )?;
+                // tokens.extend(response_tokens);
                 tokens.extend(Tokenizer::lexer_w(
                     source_cursor,
-                    &mut LexerOptions::default(),
+                    &mut LexerOptions::default().set_break_by_close_parenthesis(true),
                 )?);
                 continue;
             }
 
             if Tokenizer::lexer_model_by_char_test(source_cursor, open_square_bracket_matches_fn) {
-                let response_tokens = Tokenizer::lexer_model_by_char_bind(
-                    source_cursor,
+                // let response_tokens = Tokenizer::lexer_model_by_char_bind(
+                //     source_cursor,
+                //     "open_square_bracket",
+                //     open_square_bracket_matches_fn,
+                //     None,
+                // )?;
+                // tokens.extend(response_tokens);
+                tokens.push(source_cursor.create_token(
                     "open_square_bracket",
-                    open_square_bracket_matches_fn,
-                    None,
-                )?;
-                tokens.extend(response_tokens);
+                    Direction::Current,
+                    Direction::Next(1),
+                ));
                 tokens.extend(Tokenizer::lexer_w(
                     source_cursor,
-                    &mut LexerOptions::default(),
+                    &mut LexerOptions::default().set_break_by_close_square_bracket(true),
                 )?);
                 continue;
             }
@@ -266,14 +297,14 @@ impl Tokenizer {
             }
 
             if Tokenizer::lexer_model_by_char_test(source_cursor, string_matches_fn) {
-                source_cursor.next();
+                source_cursor.forward(1);
                 let response_tokens = Tokenizer::lexer_model_by_char_bind(
                     source_cursor,
                     "string",
                     not_string_matches_fn,
                     Some(BindOptions::new().set_scape_char(true)),
                 )?;
-                source_cursor.next();
+                source_cursor.forward(1);
                 tokens.extend(response_tokens);
                 continue;
             }
@@ -329,8 +360,7 @@ impl Tokenizer {
 
         while let Some((_, char)) = source_cursor.current() {
             if scape_char && char == '\\' {
-                source_cursor.next();
-                source_cursor.next();
+                source_cursor.forward(2);
                 continue;
             }
             if matches_fn(source_cursor) {
@@ -380,7 +410,7 @@ impl Tokenizer {
 
         while let Some(_) = source_cursor.current() {
             if scape_char && source_cursor.get_current_char() == '\\' {
-                source_cursor.move_direction(Direction::Next(2));
+                source_cursor.forward(Direction::Next(2));
                 continue;
             }
 

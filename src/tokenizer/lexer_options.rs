@@ -6,21 +6,21 @@ pub struct LexerOptions {
 }
 
 impl LexerOptions {
-    pub fn _set_break_by_close_square_bracket(
+    pub fn set_break_by_close_square_bracket(
         &mut self,
         break_by_close_square_bracket: bool,
     ) -> &mut Self {
         self.break_by_close_square_bracket = break_by_close_square_bracket;
         self
     }
-    pub fn _set_break_by_close_parenthesis(
+    pub fn set_break_by_close_parenthesis(
         &mut self,
         break_by_close_parenthesis: bool,
     ) -> &mut Self {
         self.break_by_close_parenthesis = break_by_close_parenthesis;
         self
     }
-    pub fn _set_break_by_close_curly_bracket(
+    pub fn set_break_by_close_curly_bracket(
         &mut self,
         break_by_close_curly_bracket: bool,
     ) -> &mut Self {

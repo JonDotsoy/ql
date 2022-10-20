@@ -5,7 +5,7 @@ expression: tokens
 Ok(
     [
         Token {
-            kind: "open_parenthesis",
+            kind: "open_curly_bracket",
             raw: "(",
             span: Span {
                 start: 0,

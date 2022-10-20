@@ -1,5 +1,0 @@
----
-source: tests/tekenizer_tests.rs
-expression: chars
----
-"123456"

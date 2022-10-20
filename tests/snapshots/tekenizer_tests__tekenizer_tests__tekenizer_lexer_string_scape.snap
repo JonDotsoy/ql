@@ -1,0 +1,16 @@
+---
+source: tests/tekenizer_tests.rs
+expression: tokens
+---
+Ok(
+    [
+        Token {
+            kind: "string",
+            raw: "any \\'world",
+            span: Span {
+                start: 2,
+                end: 13,
+            },
+        },
+    ],
+)

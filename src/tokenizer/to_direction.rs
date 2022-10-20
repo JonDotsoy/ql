@@ -1,16 +1,16 @@
 use super::direction::Direction;
 
-pub trait AtDirection {
+pub trait ToDirection {
     fn resolve(self, pos: usize) -> usize;
 }
 
-impl AtDirection for Direction {
+impl ToDirection for Direction {
     fn resolve(self, pos: usize) -> usize {
         Direction::resolve(&self, pos)
     }
 }
 
-impl AtDirection for i32 {
+impl ToDirection for i32 {
     fn resolve(self, pos: usize) -> usize {
         if self == 0 {
             Direction::Current.resolve(pos)

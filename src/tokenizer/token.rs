@@ -1,3 +1,5 @@
+use super::value::Value;
+
 #[derive(Debug)]
 pub struct Span {
     pub start: usize,

@@ -1,8 +1,6 @@
-use super::{
-    at_direction::AtDirection,
-    direction::Direction,
-    token::{Span, Token},
-};
+use super::to_direction::ToDirection;
+use super::token::Span;
+use super::token::Token;
 
 pub struct SourceCursor {
     pub(crate) source: String,
@@ -19,7 +17,7 @@ impl SourceCursor {
 
     pub fn get<A>(&self, position_from: A, position_at: A) -> &str
     where
-        A: AtDirection,
+        A: ToDirection,
     {
         let from = position_from.resolve(self.pos);
         let at = position_at.resolve(self.pos);
@@ -101,7 +99,7 @@ impl SourceCursor {
         self.source.chars().skip(self.pos).take(chunk_len).collect()
     }
 
-    pub fn move_direction(&mut self, direction: Direction) {
+    pub fn forward<A: ToDirection>(&mut self, direction: A) {
         self.pos = direction.resolve(self.pos);
     }
 
@@ -112,8 +110,8 @@ impl SourceCursor {
         direction_at: B,
     ) -> Token
     where
-        A: AtDirection,
-        B: AtDirection,
+        A: ToDirection,
+        B: ToDirection,
     {
         let from = direction_from.resolve(self.pos);
         let at = direction_at.resolve(self.pos);
