@@ -4,7 +4,7 @@ mod lexer_error;
 mod lexer_options;
 mod source_cursor;
 mod to_direction;
-mod token;
+pub mod token;
 mod value;
 
 use self::bind_options::BindOptions;
