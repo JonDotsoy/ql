@@ -5,7 +5,6 @@ mod lexer_options;
 mod source_cursor;
 mod to_direction;
 pub mod token;
-mod value;
 
 use self::bind_options::BindOptions;
 use self::direction::Direction;

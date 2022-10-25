@@ -5,10 +5,22 @@ mod ast_tests {
 
     #[test]
     fn ast_parse_identifier_1() {
-        let payload = "$.a.b";
-
+        let payload = "$.a";
         let tokens = Tokenizer::lexer(payload).unwrap();
-
         assert_debug_snapshot!(AST::parse(tokens));
     }
-} 
+
+    #[test]
+    fn ast_parse_identifier_2() {
+        let payload = "$.a.b";
+        let tokens = Tokenizer::lexer(payload).unwrap();
+        assert_debug_snapshot!(AST::parse(tokens));
+    }
+
+    #[test]
+    fn ast_parse_identifier_3() {
+        let payload = r#"$.a["as\"d"]"#;
+        let tokens = Tokenizer::lexer(payload).unwrap();
+        assert_debug_snapshot!(AST::parse(tokens));
+    }
+}
